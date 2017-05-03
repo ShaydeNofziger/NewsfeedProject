@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SWEN-344 | Newsfeed Project</title>
+        <script type="text/javascript" src="./js/util.js"></script>
+        <script type="text/javascript" src="./js/index.js"></script>
+        <script type="text/javascript" src="./js/registration.js"></script>
+        <script type="text/javascript" src="./js/login.js"></script>
+        <script type="text/javascript" src="./js/rss.js"></script>
+        <link rel="stylesheet" href="./css/w3.css">
+        <link rel="stylesheet" href="./css/index.css">
+    </head>
+    <body>
+        <!-- Page Header-->
+        <header class="w3-container w3-cyan">
+            <h1>My Newsfeed</h1>
+            <h5 class="logged-out">Created by Shayde Nofziger for SWEN-344</h5>
+            <h5 class="logged-in" hidden>Logged in as: <span class="username-text"></span></h5>
+        </header>
+
+        <!-- Hidden element for getting the logged in user's username -->
+        <span id="username" class="username-text" hidden></span>
+
+        <!-- Navigation Bar -->
+        <div class="w3-row">
+            <div class="w3-bar w3-center w3-grey">
+                <a href="#" id="loginButton" class="w3-bar-item w3-button w3-right logged-out">Login</a>
+                <a href="#" id="registerButton" class="w3-bar-item w3-button w3-right logged-out">Register</a>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="w3-container w3-quarter w3-light-grey logged-in" hidden>
+            <div class="w3-row">
+                <h3 class="w3-center">RSS Feed Options</h3>
+            </div>
+            <div class="w3-row">
+                <h4>Selected Feeds:</h4>
+                <div class="w3-container">
+                    <div class="w3-row">
+                        <input class="w3-check" type="checkbox" id="techcrunch">
+                        <label>TechCrunch</label>
+                    </div>
+                    <div class="w3-row">
+                        <input class="w3-check" type="checkbox" id="espn">
+                        <label>ESPN</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RSS Feed area -->
+        <div class="w3-container w3-rest">
+            <div class="w3-row">
+            </div>
+        </div>
+
+        <!-- Registration Modal -->
+        <div id="registerModal" class="w3-modal">
+            <div class="w3-modal-content">
+
+                <header class="w3-container w3-cyan"> 
+                    <span onclick="document.getElementById('registerModal').style.display='none'" 
+                    class="w3-button w3-display-topright">&times;</span>
+                    <h2>New User</h2>
+                </header>
+                <div class="w3-container">
+                    <div class="w3-row">
+                        <div class="w3-card-2">
+                            <form name="registerUser" class="w3-container">
+                                <label for="username">Username</label>
+                                <input name="username" class="w3-input" type="text">
+
+                                <label for="password">Password</label>
+                                <input name="password" class="w3-input" type="password">
+
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input name="confirmPassword" class="w3-input" type="password">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="w3-row" id="registerFormValidationDiv">
+                        <div class="w3-panel w3-card-2 w3-pale-yellow" id="registrationWarnings">
+                            <h3>Validation Issues</h3>
+                            <ul id="registerFormValidationList">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <footer class="w3-container w3-cyan">
+                    <span id="registerSubmit" class="w3-button w3-right">Submit</span>
+                    <span id="registerCancel" class="w3-button w3-right">Cancel</span>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="w3-modal">
+            <div class="w3-modal-content">
+                <header class="w3-container w3-cyan"> 
+                    <span onclick="document.getElementById('loginModal').style.display='none'" 
+                    class="w3-button w3-display-topright">&times;</span>
+                    <h2>Login</h2>
+                </header>
+                <div class="w3-container">
+                    <div class="w3-row">
+                        <div class="w3-card-2">
+                            <form name="loginUser" class="w3-container">
+                                <label for="username">Username</label>
+                                <input name="username" class="w3-input" type="text">
+
+                                <label for="password">Password</label>
+                                <input name="password" class="w3-input" type="password">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="w3-row" id="loginFailedDiv">
+                        <div class="w3-panel w3-card-2 w3-pale-red">
+                            <h3>Incorrect Username/Password</h3>
+                        </div>
+                    </div>
+                </div>
+                <footer class="w3-container w3-cyan">
+                    <span id="loginSubmit" class="w3-button w3-right">Submit</span>
+                    <span id="loginCancel" class="w3-button w3-right">Cancel</span>
+                </footer>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            window.onload = init(true);
+        </script>
+    </body>
+</html>
