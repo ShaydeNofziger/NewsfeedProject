@@ -5,3 +5,7 @@
 .w3-modal footer {
     margin-top: 5px;
 }
+
+img {
+    max-width: 100%;
+}

@@ -1,3 +1,4 @@
+var storiesList = [];
 function rssEventHandlers() {
     var techcrunch = document.getElementById('techcrunch');
     var espn = document.getElementById('espn');
@@ -5,19 +6,16 @@ function rssEventHandlers() {
     techcrunch.onchange = function() {
         if (this.checked) addSelectedFeed('techcrunch');
         else removeSelectedFeed('techcrunch');
+        refreshFeeds();
     }
 
     espn.onchange = function() {
         if (this.checked) addSelectedFeed('espn');
         else removeSelectedFeed('espn');
+        refreshFeeds();
     }
 }
 
-getFeedTemplate(
-    function(template) {
-        console.log(template);
-    }
-)
 
 function getFeedTemplate(callback) {
     var templateXhr = new XMLHttpRequest();
@@ -30,20 +28,85 @@ function getFeedTemplate(callback) {
     templateXhr.open('GET', './templates/rss_story.html');
     templateXhr.send();
 }
+setTimeout(refreshFeeds, 1000);
+
+function updateFeed(newStoriesList) {
+    storiesList = newStoriesList;
+    getFeedTemplate(
+        function(template) {
+            var templateDiv = document.getElementById('templateDiv');
+            templateDiv.innerHTML = '';
+            storiesList.forEach(function(story) {
+                var templateElement = document.createElement('html');
+                templateElement.innerHTML = template;
+                var templateDocument = document.createDocumentFragment();
+                templateDocument.appendChild(templateElement);
+
+                var titleElement = templateDocument.getElementById('story_title');
+                var descriptionElement = templateDocument.getElementById('story_description');
+                var publishedDateElement = templateDocument.getElementById('story_published_date');
+
+                titleElement.innerHTML = '<a href="' + story.link + '">' + story.title + '</a>';
+                descriptionElement.innerHTML = story.description;
+
+                var feedFlares = descriptionElement.getElementsByClassName('feedflare');
+                var feedFlaresArray = Array.prototype.slice.call(feedFlares);
+                feedFlaresArray.forEach(function(feedFlare) {
+                    feedFlare.innerHTML = '';
+                });
+                var imgTags = descriptionElement.getElementsByTagName('img');
+                var imgTagsArray = Array.prototype.slice.call(imgTags);
+                imgTagsArray.forEach(function(imgElement) {
+                    if (imgElement.attributes.height.value === '1'|| imgElement.attributes.width.value === '1') {
+                        imgElement.innerHTML = '';
+                    } else {
+                        imgElement.style.display = 'block';
+                        imgElement.style.float = 'left';
+                        imgElement.style.paddingRight = '5px';
+                        imgElement.style.width = '25%';
+                        imgElement.style.height = 'auto';
+                    }
+                })
+
+                publishedDateElement.innerText = story.published_date;
+                templateDiv.appendChild(templateElement);
+            });
+        }
+    );
+}
+
+function comparePublishDates(storyA, storyB) {
+    var storyADate = new Date(storyA.published_date);
+    var storyBDate = new Date(storyB.published_date);
+    if (storyADate > storyBDate) return -1;
+    if (storyADate < storyBDate) return  1;
+    return 0;
+}
 
 function refreshFeeds() {
-    var allFeeds = [];
     var username = getUsername();
     var userData = getUserData(username);
+    feedData = [];
+    var newStoriesList = [];
     userData.selected_feeds.forEach(
         function(feed) {
             getFeedContent(feed,
                 function(feedData) {
-                    allFeeds = allFeeds.concat(feedData);
+                    feedData.forEach(function(feed) {
+                        feed.stories.forEach(function(story) {
+                            story.sourcelink = feed.link;
+                            story.sourcetitle = feed.title;
+                        });
+                        newStoriesList = newStoriesList.concat(feed.stories);
+                        newStoriesList = newStoriesList.sort(comparePublishDates);
+                    })
                 }
             );
         }
     );
+    setTimeout(function() {
+        updateFeed(newStoriesList);
+    }, 10000);
 }
 
 function getFeedContent(feed, callback) {
